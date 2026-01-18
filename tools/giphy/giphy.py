@@ -44,7 +44,7 @@ class Tools:
     class UserValves(BaseModel):
         GIF_LANG: str = Field(
             default="en",
-            description="Language(s) for search results, e.g. 'en,fr'",
+            description="Language for search results",
         )
         GIF_RATING: Literal["g", "pg", "pg-13", "r"] = Field(
             default="g",
@@ -99,7 +99,7 @@ class Tools:
                     return [
                         {
                             "description": (gif["alt_text"] or f'{gif["title"]} {gif["slug"]}'),
-                            "url": gif["images"]["original"]["webp"],
+                            "url": (gif["images"]["original"].get("webp", None) or gif["images"]["original"]["url"]),
                         }
                         for gif in search_data["data"]
                     ]
