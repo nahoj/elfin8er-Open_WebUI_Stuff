@@ -62,9 +62,10 @@ class Tools:
         self.valves = self.Valves()
 
     async def search_gifs(self, query: str, __event_emitter__: Callable[[dict], Awaitable[None]]):
-        """Search for gifs with a given query using Giphy API and include gif in response
-        Args:
-            query (str): The term used to search for GIFs on Giphy.
+        """
+        Search for a GIF on Giphy and embed it in the chat.
+        :param query: The search term to find a GIF (e.g., 'funny cat').
+        :return: A status message indicating if the GIF was found.
         """
         if not self.valves.GIPHY_API_KEY:
             return "ERROR: GIPHY_API_KEY is not set in Valves configuration."
