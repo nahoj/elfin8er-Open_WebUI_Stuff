@@ -27,27 +27,19 @@ async def emit_status(
 
 async def emit_embed(
     gif: dict,
-) -> HTMLResponse:
-        """Helper to emit embed events for displaying gifs"""
-
-        iframe_html = f'''
-            <div>
-                <iframe src="{gif["embed_url"]}" 
-                        width="300" 
-                        height="300" 
-                        frameBorder="0" 
-                        class="giphy-embed" 
-                        allowFullScreen>
-                </iframe>
-                <p style="margin: 0;"><a href="{gif["url"]}">via GIPHY</a></p>
-            </div>
-        '''.strip()
-        return HTMLResponse(content=iframe_html, headers={"content-disposition": "inline"})
+    __event_emitter__: Callable[[dict], Awaitable[None]],
+) -> None:        
+        await __event_emitter__({
+            "type": "message",
+            "data": {
+                "content": f"![test]({gif['images']['original']['url']})\n[via GIPHY]({gif['url']})"
+            }
+        })
 
 class Tools:
     class Valves(BaseModel):
         GIPHY_API_KEY: str = Field(
-            default="",
+            default="t71DZv6eSRtRyAgV0lBIiVtcPzeYa5cT",
             description="API key for Giphy",
         )
         API_BASE_URL: str = Field(
@@ -58,7 +50,7 @@ class Tools:
     def __init__(self):
         self.valves = self.Valves()
 
-    async def search_gifs(self, query, __event_emitter__):
+    async def search_gifs(self, query: str, __event_emitter__: Callable[[dict], Awaitable[None]]):
         """Search for gifs with a given query using Giphy API and include gif in response
         Args:
             query (str): The term used to search for GIFs on Giphy.
@@ -82,11 +74,8 @@ class Tools:
                     if not search_data['data']:
                         return f"ERROR: No GIFs found for query: {query}"
                     gif = search_data['data'][random.randint(0, len(search_data['data']) - 1)]
-                    return await emit_embed(gif)
+                    await emit_status(__event_emitter__, f"Displaying gif from query: {query}", done=True)
+                    await emit_embed(gif, __event_emitter__)
+                    return f"Successfully found and displayed a GIF for '{query}'."
         except Exception as e:
             return f"Error occurred while searching Giphy: {str(e)}"
-        
-
-# import asyncio
-# test = asyncio.run(Tools().search_gifs("funny cat"))
-# print(test)
