@@ -11,7 +11,6 @@ requires: aiohttp, fastapi, pydantic
 import random
 import aiohttp
 from typing import Optional, Any, Callable, Awaitable
-from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 async def emit_status(
@@ -39,7 +38,7 @@ async def emit_embed(
 class Tools:
     class Valves(BaseModel):
         GIPHY_API_KEY: str = Field(
-            default="t71DZv6eSRtRyAgV0lBIiVtcPzeYa5cT",
+            default="",
             description="API key for Giphy",
         )
         API_BASE_URL: str = Field(
