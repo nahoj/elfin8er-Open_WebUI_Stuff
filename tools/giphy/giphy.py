@@ -24,17 +24,6 @@ async def emit_status(
             {"type": "status", "data": {"description": description, "done": done}}
         )
 
-async def emit_embed(
-    gif: dict,
-    __event_emitter__: Callable[[dict], Awaitable[None]],
-) -> None:        
-        await __event_emitter__({
-            "type": "message",
-            "data": {
-                "content": f"![test]({gif['images']['original']['url']})\n[via GIPHY]({gif['url']})"
-            }
-        })
-
 class Tools:
     class Valves(BaseModel):
         GIPHY_API_KEY: str = Field(
@@ -88,7 +77,6 @@ class Tools:
                     gif = search_data['data'][random.randint(0, len(search_data['data']) - 1)]
                     await emit_status(__event_emitter__, f"Displaying gif from query: {query}")
                     await emit_status(__event_emitter__, gif['url'], done=True)
-                    #await emit_embed(gif, __event_emitter__, done=True)
                     return f"![from giphy]({gif['images']['original']['url']}) [via GIPHY]({gif['url']})"
         except Exception as e:
             return f"Error occurred while searching Giphy: {str(e)}"
